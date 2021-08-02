@@ -1,139 +1,79 @@
-import { Button, Col, Divider, Form, Input, Row, Space, Tooltip } from "antd";
-import React, { useState } from "react";
+import { Button, Col, Divider, Form, Input, Row, Popover, Tooltip } from "antd";
+import React, { useRef, useState, useEffect } from "react";
 
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import ImgUpload from "common/ImgUpload";
 
-const UserForm = () => {
-  const [img, setImg] = useState(null);
+const { TextArea } = Input;
+
+const UserForm = ({ scanProps }) => {
+  const { uid, name, path, text } = scanProps;
+  const [popover, setPopover] = useState(false);
+  const [textPretty, setTextPretty] = useState("");
+  const textAreaRef = useRef(null);
+
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    const t = JSON.stringify(JSON.parse(text), undefined, 4);
+    setTextPretty(t);
+  }, [text]);
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
 
-  function handleUpload(file) {
-    setImg(file);
-  }
+  const copyToClipboard = () => {
+    setPopover(true);
+    navigator.clipboard.writeText(text);
 
-  function handleRemove() {
-    setImg(null);
-  }
+    setTimeout(() => {
+      setPopover(false);
+    }, 2000);
+  };
 
   return (
-    <Form form={form} name="userForm" onFinish={onFinish} scrollToFirstError>
+    <Form
+      form={form}
+      initialValues={(uid, name, path, text)}
+      name="userForm"
+      onFinish={onFinish}
+      scrollToFirstError
+    >
       <Row gutter={16}>
-        <Col span={6}>
-          <Form.Item
-            name="username"
-            label={
-              <span>
-                Usuário&nbsp;
-                <Tooltip title="Usuário/Login que será usado para acesso ao sistema!">
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Por favor informe o nome do usuário!",
-                whitespace: true,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+        <Col span={8}>
+          <label htmlFor={"textTranslated"}>
+            <span>
+              ID&nbsp;
+              <Tooltip title="ID único do arquivo!">
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </span>
+          </label>
+          <br />
+          <Input name="uid" value={uid} disabled />
         </Col>
-        <Col span={12}>
-          <Form.Item
-            name="name"
-            label="Nome"
-            rules={[
-              {
-                required: true,
-                message: "O nome é obrigatório!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item name="status" label="Status">
-            <Input disabled />
-          </Form.Item>
+        <Col span={16}>
+          <label htmlFor={"textTranslated"}>Nome do Arquivo</label>
+          <br />
+          <Input name="name" value={name} disabled />
         </Col>
       </Row>
       <Row gutter={16}>
-        <Col span={10}>
-          <Form.Item
-            name="email"
-            label="E-mail"
-            rules={[
-              {
-                type: "email",
-                message: "O E-mail informado não é válido!",
-              },
-              {
-                required: true,
-                message: "Por favor informe seu E-mail!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={7}>
-          <Form.Item
-            name="password"
-            label="Senha"
-            rules={[
-              {
-                required: true,
-                message: "Por favor informe a senha!",
-              },
-            ]}
-            hasFeedback
-          >
-            <Input.Password />
-          </Form.Item>
-        </Col>
-        <Col span={7}>
-          <Form.Item
-            name="confirm"
-            label="Confirme a Senha"
-            dependencies={["password"]}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: "Confirme sua senha!",
-              },
-              ({ getFieldValue }) => ({
-                validator(rule, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    "The two passwords that you entered do not match!"
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
+        <Col span={24}>
+          <label htmlFor={"textTranslated"}>Caminho do Arquivo</label>
+          <br />
+          <Input name="path" value={path} disabled />
         </Col>
       </Row>
       <Row>
-        <Col>
-          <label htmlFor={"imgSection"}>Foto</label> <br />
-          <ImgUpload
-            name="imgFoto"
-            handleUpload={handleUpload}
-            handleRemove={handleRemove}
-            imgUrl={"" /* TODO linkar a imagem*/}
+        <Col span={24}>
+          <label htmlFor={"textTranslated"}>Resultado da API</label> <br />
+          <TextArea
+            ref={textAreaRef}
+            showCount
+            readOnly
+            autoSize={{ minRows: 5 }}
+            value={textPretty}
           />
         </Col>
       </Row>
@@ -141,13 +81,15 @@ const UserForm = () => {
 
       <Row>
         <Col span={24} style={{ textAlign: "right" }}>
-          <Space>
-            <Button>Limpar Campos</Button>
-
-            <Button type="primary" htmlType="submit">
-              Salvar Dados
+          <Popover
+            trigger="click"
+            visible={popover}
+            content={"Texto copiado para a área de transferência!"}
+          >
+            <Button onClick={() => copyToClipboard()} type="primary">
+              Copiar para área de transferência
             </Button>
-          </Space>
+          </Popover>
         </Col>
       </Row>
     </Form>

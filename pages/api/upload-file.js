@@ -1,4 +1,3 @@
-import aws from "aws-sdk";
 import formidable from "formidable-serverless";
 import fs from "fs";
 import path from "path";

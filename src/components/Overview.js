@@ -1,4 +1,19 @@
-import { ApiTwoTone, BellOutlined, BookOutlined, DatabaseTwoTone, EditTwoTone, EllipsisOutlined, FallOutlined, FileZipTwoTone, MessageOutlined, PhoneOutlined, PrinterTwoTone, RestTwoTone, RiseOutlined, SaveTwoTone } from '@ant-design/icons';
+import {
+  ApiTwoTone,
+  BellOutlined,
+  BookOutlined,
+  DatabaseTwoTone,
+  EditTwoTone,
+  EllipsisOutlined,
+  FallOutlined,
+  FileZipTwoTone,
+  MessageOutlined,
+  PhoneOutlined,
+  PrinterTwoTone,
+  RestTwoTone,
+  RiseOutlined,
+  SaveTwoTone,
+} from "@ant-design/icons";
 import {
   Avatar,
   Card,
@@ -10,8 +25,8 @@ import {
   Message,
   Progress,
   Row,
-  Timeline
-} from 'antd';
+  Timeline,
+} from "antd";
 import {
   DiscreteColorLegend,
   FlexibleWidthXYPlot,
@@ -19,15 +34,15 @@ import {
   VerticalBarSeries,
   VerticalGridLines,
   XAxis,
-  YAxis
-} from 'react-vis';
+  YAxis,
+} from "react-vis";
 
-import NoSSR from 'react-no-ssr';
-import PostCard from './shared/PostCard';
-import StatCard from './shared/StatCard';
-import WeatherCard from './shared/WeatherCard';
-import styled from 'styled-components';
-import { theme } from './styles/GlobalStyles';
+import NoSSR from "react-no-ssr";
+import PostCard from "./shared/PostCard";
+import StatCard from "./shared/StatCard";
+import WeatherCard from "./shared/WeatherCard";
+import styled from "styled-components";
+import { theme } from "./styles/GlobalStyles";
 
 const { MonthPicker } = DatePicker;
 
@@ -35,7 +50,7 @@ const axes = Array.from(Array(12).keys());
 
 const generate = () => {
   let arr = [];
-  axes.map(x => {
+  axes.map((x) => {
     const y = Math.floor(Math.random() * 10) + 1;
     arr.push({ x, y });
   });
@@ -44,13 +59,13 @@ const generate = () => {
 
 const series = [
   {
-    title: 'Abertos',
-    data: generate()
+    title: "Uploads",
+    data: generate(),
   },
   {
-    title: 'Concluídos',
-    data: generate()
-  }
+    title: "Reconhecidos",
+    data: generate(),
+  },
 ];
 
 const Legend = styled.div`
@@ -72,32 +87,32 @@ const menu = (
   <Menu>
     <Menu.Item>
       <Row type="flex" align="middle">
-        <FileZipTwoTone style={{ fontSize: '16px' }} />
+        <FileZipTwoTone style={{ fontSize: "16px" }} />
         <span className="mx-3">Archive</span>
       </Row>
     </Menu.Item>
     <Menu.Item>
       <Row type="flex" align="middle">
-        <EditTwoTone style={{ fontSize: '16px' }} />
+        <EditTwoTone style={{ fontSize: "16px" }} />
         <span className="mx-3">Edit</span>
       </Row>
     </Menu.Item>
     <Menu.Item>
       <Row type="flex" align="middle">
-        <RestTwoTone style={{ fontSize: '16px' }} />
+        <RestTwoTone style={{ fontSize: "16px" }} />
         <span className="mx-3">Delete</span>
       </Row>
     </Menu.Item>
     <Menu.Divider />
     <Menu.Item>
       <Row type="flex" align="middle">
-        <SaveTwoTone style={{ fontSize: '16px' }} />
+        <SaveTwoTone style={{ fontSize: "16px" }} />
         <span className="mx-3">Save as</span>
       </Row>
     </Menu.Item>
     <Menu.Item>
       <Row type="flex" align="middle">
-        <PrinterTwoTone style={{ fontSize: '16px' }} />
+        <PrinterTwoTone style={{ fontSize: "16px" }} />
         <span className="mx-3">Print</span>
       </Row>
     </Menu.Item>
@@ -106,32 +121,32 @@ const menu = (
 
 const data = [
   {
-    title: 'Click through ratio',
+    title: "Click through ratio",
     subtitle: (
       <span>
         <span className="mr-1">15%</span>
-        <RiseOutlined style={{ fontSize: '20px' }} className="text-success" />
+        <RiseOutlined style={{ fontSize: "20px" }} className="text-success" />
       </span>
-    )
+    ),
   },
   {
-    title: 'Cost per thousand',
+    title: "Cost per thousand",
     subtitle: (
       <span>
         <span className="mr-1">$320.89</span>
-        <FallOutlined style={{ fontSize: '20px' }} className="text-error" />
+        <FallOutlined style={{ fontSize: "20px" }} className="text-error" />
       </span>
-    )
+    ),
   },
   {
-    title: 'Bounce rate',
+    title: "Bounce rate",
     subtitle: (
       <span>
         <span className="mr-1">34%</span>
-        <RiseOutlined style={{ fontSize: '20px' }} className="text-success" />
+        <RiseOutlined style={{ fontSize: "20px" }} className="text-success" />
       </span>
-    )
-  }
+    ),
+  },
 ];
 
 const TimelinePeriod = ({ content }) => (
@@ -152,54 +167,54 @@ const Overview = () => {
         <Col xs={24} sm={12} md={6}>
           <StatCard
             type="fill"
-            title="Atendimentos"
-            value={103}
-            icon={<BookOutlined style={{ fontSize: '20px'}} />}
+            title="Uploads"
+            value={1030}
+            icon={<BookOutlined style={{ fontSize: "20px" }} />}
             color={theme.primaryColor}
-            clickHandler={() => Message.info('Campaign stat button clicked')}
+            clickHandler={() => Message.info("Campaign stat button clicked")}
           />
         </Col>
         <Col xs={24} sm={12} md={6}>
           <StatCard
             type="fill"
-            title="Novos Filiados"
+            title="Arquivos Negados"
             value={23}
-            icon={<PhoneOutlined style={{ fontSize: '20px'}}  />}
+            icon={<PhoneOutlined style={{ fontSize: "20px" }} />}
             color={theme.darkColor}
-            clickHandler={() => Message.info('Customers stat button clicked')}
+            clickHandler={() => Message.info("Customers stat button clicked")}
           />
         </Col>
         <Col xs={24} sm={12} md={6}>
           <StatCard
             type="fill"
-            title="Mensagens"
-            value={323}
-            icon={<BellOutlined style={{ fontSize: '20px'}} />}
+            title="Processados"
+            value={923}
+            icon={<BellOutlined style={{ fontSize: "20px" }} />}
             color={theme.warningColor}
-            clickHandler={() => Message.info('Queries stat button clicked')}
+            clickHandler={() => Message.info("Queries stat button clicked")}
           />
         </Col>
         <Col xs={24} sm={12} md={6}>
           <StatCard
             type="fill"
-            title="Ligações"
+            title="Pendentes"
             value={87}
-            icon={<MessageOutlined style={{ fontSize: '20px'}} />}
+            icon={<MessageOutlined style={{ fontSize: "20px" }} />}
             color={theme.errorColor}
-            clickHandler={() => Message.info('Opens stat button clicked')}
+            clickHandler={() => Message.info("Opens stat button clicked")}
           />
         </Col>
       </Row>
 
       <Card
-        title="Atendimentos"
+        title="Média de Processamento"
         extra={
           <Dropdown overlay={menu}>
-            <EllipsisOutlined style={{ fontSize: '20px' }} />
+            <EllipsisOutlined style={{ fontSize: "20px" }} />
           </Dropdown>
         }
-        bodyStyle={{ padding: '1rem' }}
-        className="mb-4" 
+        bodyStyle={{ padding: "1rem" }}
+        className="mb-4"
       >
         <NoSSR>
           <Legend>
@@ -234,7 +249,7 @@ const Overview = () => {
                 type="dashboard"
                 percent={90}
                 width={181}
-                format={percent => (
+                format={(percent) => (
                   <span className="text-center">
                     <div
                       css={`
@@ -243,7 +258,7 @@ const Overview = () => {
                         margin: auto;
                       `}
                     >
-                      <ApiTwoTone style={{ fontSize: '20px'}} />
+                      <ApiTwoTone style={{ fontSize: "20px" }} />
                     </div>
                     <div
                       className="h5 mb-0"
@@ -264,7 +279,7 @@ const Overview = () => {
             <List
               itemLayout="horizontal"
               dataSource={data}
-              renderItem={item => (
+              renderItem={(item) => (
                 <List.Item>
                   <List.Item.Meta
                     title={
@@ -291,7 +306,7 @@ const Overview = () => {
             title="Tasks"
             extra={
               <Dropdown overlay={menu}>
-                <EllipsisOutlined style={{ fontSize: '20px' }} />
+                <EllipsisOutlined style={{ fontSize: "20px" }} />
               </Dropdown>
             }
           >
@@ -309,9 +324,7 @@ const Overview = () => {
                 </div>
               </Timeline.Item>
               <Timeline.Item
-                dot={
-                  <DatabaseTwoTone style={{ fontSize: '16px' }} />
-                }
+                dot={<DatabaseTwoTone style={{ fontSize: "16px" }} />}
               >
                 <div className="text-truncate">
                   <TimelinePeriod content="13.00" />
@@ -332,7 +345,7 @@ const Overview = () => {
             title="Activity"
             extra={
               <Dropdown overlay={menu}>
-                <EllipsisOutlined style={{ fontSize: '20px' }} />
+                <EllipsisOutlined style={{ fontSize: "20px" }} />
               </Dropdown>
             }
           >
@@ -340,9 +353,7 @@ const Overview = () => {
               pending={<div className="ml-4">Activities pending...</div>}
               className="mt-2"
             >
-              <Timeline.Item
-                dot={<Avatar size={24} src="/images/face1.jpg" />}
-              >
+              <Timeline.Item dot={<Avatar size={24} src="/images/face1.jpg" />}>
                 <div className="ml-4 text-truncate">
                   <TimelinePeriod content="9.45" />
                   <span>
@@ -350,9 +361,7 @@ const Overview = () => {
                   </span>
                 </div>
               </Timeline.Item>
-              <Timeline.Item
-                dot={<Avatar size={24} src="/images/face2.jpg" />}
-              >
+              <Timeline.Item dot={<Avatar size={24} src="/images/face2.jpg" />}>
                 <div className="ml-4 text-truncate">
                   <TimelinePeriod content="11.20" />
                   <span>
@@ -360,9 +369,7 @@ const Overview = () => {
                   </span>
                 </div>
               </Timeline.Item>
-              <Timeline.Item
-                dot={<Avatar size={24} src="/images/face3.jpg" />}
-              >
+              <Timeline.Item dot={<Avatar size={24} src="/images/face3.jpg" />}>
                 <div className="ml-4 text-truncate">
                   <TimelinePeriod content="13.00" />
                   <span>
@@ -370,9 +377,7 @@ const Overview = () => {
                   </span>
                 </div>
               </Timeline.Item>
-              <Timeline.Item
-                dot={<Avatar size={24} src="/images/face4.jpg" />}
-              >
+              <Timeline.Item dot={<Avatar size={24} src="/images/face4.jpg" />}>
                 <div className="ml-4 text-truncate">
                   <TimelinePeriod content="15.00" />
                   <span>
@@ -395,10 +400,7 @@ const Overview = () => {
             title="Shrimp and Chorizo Paella"
             subtitle="Yesterday"
             image="/images/unsplash/1.jpg"
-            images={[
-              '/images/unsplash/1.jpg',
-              '/images/unsplash/15.jpg'
-            ]}
+            images={["/images/unsplash/1.jpg", "/images/unsplash/15.jpg"]}
             imageHeight={365}
             text="Phileas Fogg and Aouda went on board, where they found Fix already installed. Below deck was a square cabin, of which the walls bulged out in the form of cots, above a circular divan; in the centre was a table provided with a swinging lamp."
           />

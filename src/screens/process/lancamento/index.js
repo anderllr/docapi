@@ -6,6 +6,8 @@ import {
   UploadOutlined,
   EditTwoTone,
   DeleteTwoTone,
+  EyeTwoTone,
+  SecurityScanTwoTone,
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -14,6 +16,7 @@ import {
   Divider,
   Layout,
   Menu,
+  Modal,
   Popconfirm,
   Upload,
   Row,
@@ -21,6 +24,7 @@ import {
   Spin,
   Table,
   Tabs,
+  Tooltip,
 } from "antd";
 
 import { useAppState } from "components/shared/AppProvider";
@@ -32,49 +36,74 @@ const TabPane = Tabs.TabPane;
 
 import Form from "./form";
 
-const columns = [
-  {
-    title: "ID",
-    dataIndex: "uid",
-    key: "uid",
-    render: (text) => <span>{text}</span>,
-  },
-  {
-    title: "Arquivo",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Caminho",
-    dataIndex: "path",
-    key: "path",
-  },
-  {
-    title: "Ações",
-    key: "action",
-    render: (text, record) => (
-      <Space size="middle">
-        <EditTwoTone onClick={() => setFormData({ ...record })} />
-        <Popconfirm
-          title="Tem certeza que quer excluir esse registro?"
-          onConfirm={() => onDelete(record.uid)}
-          onCancel={() => console.log("Clicou no cancelar...")}
-          okText="Sim"
-          cancelText="Não"
-        >
-          <DeleteTwoTone twoToneColor="#FF0000" />
-        </Popconfirm>
-      </Space>
-    ),
-  },
-];
-
 const Lancamento = () => {
-  const [data, setData] = useState([]);
   const [state, dispatch] = useAppState();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [dataGrid, setDataGrid] = useState([]);
+  const [tab, setTab] = useState("1");
+  const [previewProps, setPreviewProps] = useState({
+    previewImage: "",
+    previewVisible: false,
+    previewTitle: "",
+  });
+  const [scanProps, setScanProps] = useState({
+    uid: "",
+    name: "",
+    path: "",
+  });
 
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "uid",
+      key: "uid",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Arquivo",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <span>{text.substring(0, 18)}</span>,
+    },
+    {
+      title: "Caminho",
+      dataIndex: "path",
+      key: "path",
+    },
+    {
+      title: "Ações",
+      key: "action",
+      render: (text, record) => (
+        <Space size="middle">
+          <Tooltip title="Visualizar a imagem!">
+            <EyeTwoTone
+              twoToneColor="#3F7875"
+              onClick={() => onPreview({ ...record })}
+            />
+          </Tooltip>
+          <Tooltip title="Clique para excluir!">
+            <Popconfirm
+              title="Tem certeza que quer excluir esse registro?"
+              onConfirm={() => onDelete(record.uid)}
+              onCancel={() => console.log("Clicou no cancelar...")}
+              okText="Sim"
+              cancelText="Não"
+            >
+              <DeleteTwoTone twoToneColor="#FF0000" />
+            </Popconfirm>
+          </Tooltip>
+          <Tooltip title="Escanear imagem!">
+            <SecurityScanTwoTone onClick={() => onScan({ ...record })} />
+          </Tooltip>
+        </Space>
+      ),
+    },
+  ];
+
+  const onChangeTab = (activeKey) => {
+    setTab(activeKey);
+  };
   const handleRemove = (file) => {
     setFileList((fileList) => {
       const index = fileList.indexOf(file);
@@ -86,11 +115,13 @@ const Lancamento = () => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
+    setDataGrid((dataGrid) => {
+      return [];
+    });
 
     setUploading(true);
-    const newData = [];
 
-    await fileList.map(async (f) => {
+    fileList.map(async (f) => {
       const { uid, name } = f;
       const { path } = await uploadFile(f, `doc_${uid}`, "docapi");
       const arq = {
@@ -99,14 +130,55 @@ const Lancamento = () => {
         path,
       };
 
-      newData.push(arq);
+      setDataGrid((dataGrid) => {
+        const newData = [...dataGrid, arq];
+        return [...newData];
+      });
     });
 
-    setData(newData);
-
     setTimeout(() => {
+      setFileList(() => []);
       setUploading(false);
     }, 2000);
+  };
+
+  const onPreview = ({ path, name }) => {
+    setPreviewProps({
+      previewImage: path,
+      previewVisible: true,
+      previewTitle: name,
+    });
+  };
+
+  const onDelete = (uid) => {
+    setDataGrid((dataGrid) => {
+      const newData = [...dataGrid.filter((item) => item.uid !== uid)];
+      return [...newData];
+    });
+  };
+
+  const onScan = async ({ uid, name, path }) => {
+    //TODO --> Connect with microsoft API
+    const res = await fetch("/api/docrecognize", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ path }),
+    });
+
+    const result = await res.text();
+
+    const { text } = JSON.parse(result);
+
+    setScanProps({
+      uid,
+      name,
+      path,
+      text,
+    });
+    setTab("2");
   };
 
   return (
@@ -157,12 +229,27 @@ const Lancamento = () => {
       </Header>
       {/* AQUI COMEÇA O FORMULÁRIO DE FATO */}
       <div className="card-container p-4">
+        <Modal
+          visible={previewProps.previewVisible}
+          title={previewProps.previewTitle}
+          footer={null}
+          onCancel={() =>
+            setPreviewProps({ ...previewProps, previewVisible: false })
+          }
+        >
+          <img
+            alt="imageUploaded"
+            style={{ width: "100%" }}
+            src={previewProps.previewImage}
+          />
+        </Modal>
         <Spin tip={"Carregando arquivo..."} spinning={uploading}>
           <Tabs
             type="card"
-            defaultActiveKey="1"
+            activeKey={tab}
+            onChange={onChangeTab}
             tabBarExtraContent={
-              <Button onClick={() => console.log("Data: ", data)}>
+              <Button onClick={() => console.log("Data: ", dataGrid)}>
                 Novo Lançamento
               </Button>
             }
@@ -202,12 +289,12 @@ const Lancamento = () => {
               <Divider />
               <Table
                 columns={columns}
-                dataSource={data}
+                dataSource={dataGrid}
                 pagination={{ defaultCurrent: 1, pageSize: 5 }}
               />
             </TabPane>
-            <TabPane className="p-4" tab="Lançamento" key="2">
-              <Form />
+            <TabPane className="p-4" tab="Scan da Imagem" key="2">
+              <Form scanProps={scanProps} />
             </TabPane>
           </Tabs>
         </Spin>

@@ -12,6 +12,7 @@ async function uploadFile(fileName, filePath, mimeType) {
     Bucket: process.env.AWS_S3_BUCKET,
     Key: fileName,
     Body: fileContent,
+    ACL: "public-read",
     //ContentType: mimeType//geralmente se acha sozinho
   };
 
