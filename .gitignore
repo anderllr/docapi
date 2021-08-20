@@ -8,4 +8,4 @@ layout.md
 variables.env
 .vercel
 .env
-.lock
+*.lock
